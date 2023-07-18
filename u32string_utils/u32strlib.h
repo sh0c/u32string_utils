@@ -29,4 +29,8 @@ namespace u32
     float strtof(const char32_t* str, char32_t** endptr);
     double strtod(const char32_t* str, char32_t** endptr);
     long double strtold(const char32_t* str, char32_t** endptr);
+
+    float stof(const std::u32string& str, size_t* idx = nullptr);
+    double stod(const std::u32string& str, size_t* idx = nullptr);
+    long double stold(const std::u32string& str, size_t* idx = nullptr);
 }

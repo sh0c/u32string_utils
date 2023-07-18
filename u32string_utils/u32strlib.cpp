@@ -330,6 +330,30 @@ namespace u32
 
             return ((is_neg) ? -result : result);
         }
+
+        template<typename T>
+        typename std::enable_if<std::is_floating_point<T>::value, T>::type s_to_floating_point(const std::u32string &str, size_t* idx)
+        {
+            const auto start = str.c_str();
+            char32_t* end {};
+            auto result = str_to_floating_point<T>(start, &end);
+            if (end - start == 0)
+            {
+                throw std::invalid_argument("no number find in string");
+            }
+
+            if (errno == ERANGE)
+            {
+                throw std::out_of_range("out of range number");
+            }
+
+            if (idx)
+            {
+                *idx = end - start;
+            }
+
+            return result;
+        }
     }
 
     int atoi(const char32_t* str)
@@ -415,5 +439,20 @@ namespace u32
     long double strtold(const char32_t* str, char32_t** endptr)
     {
         return str_to_floating_point<long double>(str, endptr);
+    }
+
+    float stof(const std::u32string& str, size_t* idx)
+    {
+        return s_to_floating_point<float>(str, idx);
+    }
+
+    double stod(const std::u32string& str, size_t* idx)
+    {
+        return s_to_floating_point<double>(str, idx);
+    }
+
+    long double stold(const std::u32string& str, size_t* idx)
+    {
+        return s_to_floating_point<long double>(str, idx);
     }
 }
