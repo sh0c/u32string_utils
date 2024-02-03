@@ -1,40 +1,63 @@
-# char32_t* and std::u32string functions that converts string to int/float and etc.
+# char32_t implementation of standard library functions
 
-## This implementation uses standard library rules for this functions:
+[![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
-## strtoi(), strtol(), strtoll(), strtoul(), strtoull():
+## This implementation uses standard library rules for this functions and does not use std localization library. Supported functions in u32strlib.h:
+### Integral: atoi(), atol(), atoll(), strtoi(), strtol(), strtoll(), strtoul(), strtoull(),
+###           stoi(), stol(), stoll(), stoul(), stoull();
+### Floating point: atof(), strtof(), strtod(), strtold(),
+###                 stof(), stod(), stold();
 
-Parses the C-string **(const char32_t*) str** interpreting its content as an integral number of the specified base, which is returned as a specific function type(T) value. If **endptr** is not a null pointer, the function also sets the value of **endptr** to point of the first character after the number.
+Usage can be found [here](https://en.cppreference.com/w/cpp/string/byte/atoi) for all functions! Difference is that this library uses char32_t* for string type.
 
-The function (*strtoi(), strtol(), strtoll(), strtoul() or strtoull()*) discards as many whitespace characters as necessary until the first non-whitespace character is found. Then, starting from this character, the function takes as many characters (valid against the **base** parameter syntax) as possible, and interprets them as a numerical value. Finally, a pointer to the first character, following the integer representation in **str**, is stored in the object pointed by **endptr**.
-
-If the value of **base** is zero, the expected syntax is similar to that of integer constants, which is formed by a succession of:
--An optional sign character (+ or -)
--An optional prefix indicating *octal* or *hexadecimal* base ("0" or "0x"/"0X" respectively)
--A sequence of *decimal* digits (if no base prefix was specified) either *octal* or *hexadecimal* digits if a specific prefix is present
-
-If the **base** value is between 2 and 36, the expected format for the integral number is a succession of valid digits and/or letters needed to represent integers of the specified radix (starting from '0' and up to 'z'/'Z' for radix 36).
-
-If the first sequence of non-whitespace characters in **str** is not a valid integral number as defined above, or if no such sequence exists because either **str** is empty or it contains only whitespace characters, no conversion is performed.
-
-### Parameters
+### Example:
 ```
-str - const char32_t* string with the representation of an integral number.
-endptr - Reference to an object of type char32_t*, whose value is set by the function to the next character in str after the numerical value. This parameter can also be a null pointer and in this case it is not used.
-base - Numerical base (radix) that determines the valid characters and their interpretation. If base is 0, the used radix is determined by the format in the sequence (see above).
-```
+#include <iostream>
+#include <string>
+#include <u32string_utils/u32strlib.h>
 
-### Return Value
-On success, the function returns the converted integral number as a type(T) of value for specific function (strtoi() - int, strtol() - long, strtoll() - long long, strtoul() - unsigned long, strtoull() - unsigned long long).
-If no valid conversion could be performed, a zero value is returned (0).
-If the read value is out of the range of representable values by a specific function type(T), the function returns *std::numeric_limits<T>::max()* or *std::numeric_limits<T>::min()* (defined in <numeric_limits>), and **errno** is set to *ERANGE*.
-
-## atoi(), atol(), atoll():
-These functions are strtoi() (for atoi()), strtol() (for atol()) and strtoll() (for atoll()) with *null pointer* for **endptr** and **base** = 10. The implementation is:
-```
-int atoi(const char32_t* str)
+int main()
 {
-    return strtoi(str, nullptr, 10);
+    constexpr const char32_t* number_str {U"12345"};
+    auto number = u32::atoi(number_str);
+    std::cout << "Number is: " << number << std::endl;
+
+    return 0;
 }
 ```
 
+## Convert strings between utf8 <-> utf32, utf16 <-> utf32
+### Using helper functions users can convert string in u32utils.h
+### Example:
+
+Convert from utf8 string to u32 string and back:
+```
+    std::string utf8_string = u8"Това събщение е на кирилица!";
+    std::u32string u32_string = u32::convert(utf8_string);
+    std::sring utf8_string_back = u32::convert(u32_string);
+```
+
+Provide char*, char16_t*, char32_t* convert:
+```
+    std::string utf8_string = u8"Това събщение е на кирилица!";
+
+    std::u32string out {};
+    out.reserve(utf8_string.size())
+    for (size_t i = 0; i < utf8_string.size(); ) {
+        char32_t out_char {};
+        size_t consumed = u32::utf8_to_u32(&char, utf8_string.data() + i, utf8_string.data() + utf8_string.size());
+        if (consumed == u32::get_unicode_invalid_codepoint_char_id())
+        {
+            break;
+        }
+
+        out.append(1, out_char);
+        i += consumed;
+    }
+```
+
+## Find char32_t symbols are in specific character category, convert char32_t symbol to upper or to lower without using standard localization library:
+### Supported functions in u32caps.h:
+### toupper(), tolower(), is_upper(), is_lower(), is_alpha(), is_digit(), is_space(), is_punctuation(), is_other_symbol(), is_currency_symbol()
+
+Information about Unicode characters group can be found [here](https://www.compart.com/en/unicode/category)
