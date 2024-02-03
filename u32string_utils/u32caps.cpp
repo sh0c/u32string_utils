@@ -2945,7 +2945,7 @@ namespace u32
             Numeric,
         };
 
-        const std::unordered_map<char32_t, numeric_type> numeric_type
+        const std::unordered_map<char32_t, numeric_type> numeric_types
         {
             {0x30, numeric_type::Decimal},    {0x31, numeric_type::Decimal},
             {0x32, numeric_type::Decimal},    {0x33, numeric_type::Decimal},
@@ -4966,8 +4966,8 @@ namespace u32
 
     bool is_digit(char32_t ch)
     {
-        auto it = numeric_type.find(ch);
-        if (it == std::end(numeric_type))
+        auto it = numeric_types.find(ch);
+        if (it == std::end(numeric_types))
         {
             return false;
         }
