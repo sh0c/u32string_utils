@@ -1,5 +1,7 @@
 #include "u32utils.h"
 
+#include <cstdint>
+
 namespace u32
 {
     namespace
