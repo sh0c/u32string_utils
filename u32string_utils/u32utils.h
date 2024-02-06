@@ -24,8 +24,6 @@ namespace u32
     size_t utf16_to_u32(char32_t* out_char, const char16_t* in_text, const char16_t* in_text_end);
     std::u16string u32_to_utf16(char32_t ch);
 
-    std::string iso_8859_1_to_utf8(std::string &str);
-
     std::string convert(const std::u32string& str);
     std::u32string convert(const std::string& str);
 }

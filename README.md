@@ -3,10 +3,8 @@
 [![stable](http://badges.github.io/stability-badges/dist/stable.svg)](http://github.com/badges/stability-badges)
 
 ## This implementation uses standard library rules for this functions and does not use std localization library. Supported functions in u32strlib.h:
-### Integral: atoi(), atol(), atoll(), strtoi(), strtol(), strtoll(), strtoul(), strtoull(),
-###           stoi(), stol(), stoll(), stoul(), stoull();
-### Floating point: atof(), strtof(), strtod(), strtold(),
-###                 stof(), stod(), stold();
+### Integral: atoi(), atol(), atoll(), strtoi(), strtol(), strtoll(), strtoul(), strtoull(), stoi(), stol(), stoll(), stoul(), stoull()
+### Floating point: atof(), strtof(), strtod(), strtold(), stof(), stod(), stold()
 
 Usage can be found [here](https://en.cppreference.com/w/cpp/string/byte/atoi) for all functions! Difference is that this library uses char32_t* for string type.
 
@@ -61,3 +59,55 @@ Provide char*, char16_t*, char32_t* convert:
 ### toupper(), tolower(), is_upper(), is_lower(), is_alpha(), is_digit(), is_space(), is_punctuation(), is_other_symbol(), is_currency_symbol()
 
 Information about Unicode characters group can be found [here](https://www.compart.com/en/unicode/category)
+
+## Charsets support:
+### User can convert between U32 and diffetent charcater sets:
+
+Supported character sets:
+
+```
+enum class charset_t
+{
+    US_ASCII,
+    ISO_8859_1,
+    ISO_8859_2,
+    ISO_8859_3,
+    ISO_8859_4,
+    ISO_8859_5,
+    ISO_8859_6,
+    ISO_8859_7,
+    ISO_8859_8,
+    ISO_8859_9,
+    ISO_8859_10,
+    ISO_8859_13,
+    ISO_8859_15,
+    WINDOWS_1250,
+    WINDOWS_1251,
+    WINDOWS_1252,
+    WINDOWS_1253,
+    WINDOWS_1254,
+    WINDOWS_1255,
+    WINDOWS_1256,
+    WINDOWS_1257,
+    WINDOWS_1258,
+    ISO_SYMBOL,
+    KOI8_R,
+    MAC_OS_ROMAN,
+    UNSUPPORTED_CHARSET
+};
+```
+
+Example:
+
+```
+#include <u32string_utils/u32charset.h>
+
+int main()
+{
+    std::string cp1251_str = "....";
+    std::u32string u32_str = u32::convert(cp1251_str, u32::charset_t::WINDOWS_1251);
+
+    return 0;
+}
+
+```

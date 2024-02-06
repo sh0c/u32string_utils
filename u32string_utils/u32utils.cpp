@@ -6,7 +6,7 @@ namespace u32
 {
     namespace
     {
-        auto unicode_to_utf8(const char32_t* in, const char32_t* in_end) -> std::string
+        std::string unicode_to_utf8(const char32_t* in, const char32_t* in_end)
         {
             std::string out;
             char32_t codepoint = 0;
@@ -55,28 +55,28 @@ namespace u32
             return out;
         }
 
-        auto is_surrogate(char16_t ch) -> int
+        int is_surrogate(char16_t ch)
         {
             return (ch - 0xd800u) < 2048u;
         }
 
-        auto is_high_surrogate(char16_t ch) -> int
+        int is_high_surrogate(char16_t ch)
         {
             return (ch & 0xfffffc00) == 0xd800;
         }
 
-        auto is_low_surrogate(char16_t ch) -> int
+        int is_low_surrogate(char16_t ch)
         {
             return (ch & 0xfffffc00) == 0xdc00;
         }
 
-        auto surrogate_to_utf32(char16_t high, char16_t low) -> char32_t
+        char32_t surrogate_to_utf32(char16_t high, char16_t low)
         {
             return (high << 10) + low - 0x35fdc00;
         }
     }
 
-    auto utf8_to_u32(char32_t* out_char, const char* in_text, const char* in_text_end) -> size_t
+    size_t utf8_to_u32(char32_t* out_char, const char* in_text, const char* in_text_end)
     {
         auto c = static_cast<char32_t>(-1);
         auto str = reinterpret_cast<const uint8_t*>(in_text);
@@ -184,7 +184,7 @@ namespace u32
         return 0;
     }
 
-    auto utf8_to_u32_reverse(char32_t* out_char, const char* start_str, const char* curr_pos) -> size_t
+    size_t utf8_to_u32_reverse(char32_t* out_char, const char* start_str, const char* curr_pos)
     {
         auto c = static_cast<char32_t>(-1);
 
@@ -215,12 +215,12 @@ namespace u32
         return 0;
     }
 
-    auto u32_to_utf8(char32_t ch) -> std::string
+    std::string u32_to_utf8(char32_t ch)
     {
         return unicode_to_utf8(&ch, &ch + 1);
     }
 
-    auto utf16_to_u32(char32_t *out_char, const char16_t *in_text, const char16_t *in_text_end) -> size_t
+    size_t utf16_to_u32(char32_t *out_char, const char16_t *in_text, const char16_t *in_text_end)
     {
         auto uc = *in_text;
         if (!is_surrogate(uc))
@@ -243,7 +243,7 @@ namespace u32
         }
     }
 
-    auto u32_to_utf16(char32_t ch) -> std::u16string
+    std::u16string u32_to_utf16(char32_t ch)
     {
         if (ch < 0x10000)
         {
@@ -258,28 +258,12 @@ namespace u32
         return std::u16string{std::begin(arr), std::end(arr)};
     }
 
-    auto iso_8859_1_to_utf8(std::string &str) -> std::string
-    {
-        std::string out;
-        for (const uint8_t ch : str)
-        {
-            if (ch < 0x80) {
-                out.push_back(ch);
-            }
-            else {
-                out.push_back(0xc0 | ch >> 6);
-                out.push_back(0x80 | (ch & 0x3f));
-            }
-        }
-        return out;
-    }
-
-    auto convert(const std::u32string &str) -> std::string
+    std::string convert(const std::u32string &str)
     {
         return unicode_to_utf8(str.data(), str.data() + str.size());
     }
 
-    auto convert(const std::string &str) -> std::u32string
+    std::u32string convert(const std::string &str)
     {
         std::u32string result {};
         result.reserve(str.size());
